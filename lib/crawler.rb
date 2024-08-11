@@ -16,23 +16,9 @@ class WebCrawler
     form_submit
   end
 
-  def parse_table
-    navigate_to_schedule
-    pp schedule_page.body
-  end
-
   def show_table
-    table_id = "WEEKLY_SCHED_HTMLAREA"
-    table = schedule_page.at("table##{table_id}")
-
-    table_rows = table.search("tr")
-
-    table_rows.each do |row|
-      cells = row.search("th, td")
-      cell_values = cells.map(&:text)
-
-      puts cell_values.join(" | ")
-    end
+    navigate_to_schedule
+    parse_table
   end
 
   private
@@ -58,10 +44,35 @@ class WebCrawler
     url = "https://clic.mmu.edu.my/psp/csprd/EMPLOYEE/SA/c/SA_LEARNER_SERVICES.SSR_SSENRL_SCHD_W.GBL?PORTALPARAM_PTCNAV=HC_SSR_SSENRL_SCHD_W_GBL&EOPP.SCNode=SA&EOPP.SCPortal=EMPLOYEE&EOPP.SCName=CO_EMPLOYEE_SELF_SERVICE&EOPP.SCLabel=Class%20Schedule&EOPP.SCFName=N_NEW_CLASSSCH&EOPP.SCSecondary=true&EOPP.SCPTfname=N_NEW_CLASSSCH&FolderPath=PORTAL_ROOT_OBJECT.CO_EMPLOYEE_SELF_SERVICE.N_NEW_ACADEMICS.N_NEW_CRSENRL.N_NEW_CLASSSCH.HC_SSR_SSENRL_SCHD_W_GBL&IsFolder=false"
     @schedule_page = agent.get(url)
   end
+
+  def parse_table
+    table_id = "WEEKLY_SCHED_HTMLAREA"
+    iframe = @schedule_page.at("iframe")
+
+    if iframe
+      iframe_src = iframe["src"]
+      iframe_page = agent.get(iframe_src)
+      table = iframe_page.at("table##{table_id}")
+
+      if table
+        table_rows = table.search("tr")
+
+        table_rows.each_with_index do |row, index|
+          cells = row.search("th, td")
+          cell_values = cells.map(&:text)
+
+          puts "Row #{index + 1}: " + cell_values.join(" | ")
+        end
+      else
+        puts "No table found in the iframe content."
+      end
+    else
+      puts "No iframe found on the main page."
+    end
+  end
 end
 
 agent = Mechanize.new
 wc = WebCrawler.new(agent)
 wc.authorize
-wc.parse_table
-# wc.show_table
+wc.show_table
