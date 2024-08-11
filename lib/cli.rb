@@ -1,10 +1,14 @@
 require "thor"
 require_relative "calendar"
+require_relative "utils"
 
 class SchedulerCli < Thor
+  include Utils
+
   def initialize(args = [], options = {}, config = {})
     super(args, options, config)
     @cal = config[:cal]
+    @wc = config[:wc]
   end
 
   desc "list events", "List all events"
@@ -18,8 +22,7 @@ class SchedulerCli < Thor
   def delete
     @cal.events.each do |ev|
       puts ev.summary
-      print "delete this event?: [y/n]: "
-      choice = $stdin.gets.chomp
+      choice = choice_prompt("delete this event?")
       @cal.delete_event(ev.id) if choice == "y"
       puts
     end
@@ -28,15 +31,19 @@ class SchedulerCli < Thor
   desc "add event", "add event to calendar"
 
   def add
-    print "insert event title: "
-    summary = $stdin.gets.chomp
+    summary = normal_prompt("insert event title:")
 
-    print "event start date (yyyy-mm-dd): "
-    start_date = $stdin.gets.chomp
+    start_date = normal_prompt("event start date (yyyy-mm-dd): ")
 
-    print "event end date (yyyy-mm-dd): "
-    end_date = $stdin.gets.chomp
+    end_date = normal_prompt("event end date (yyyy-mm-dd): ")
 
     @cal.insert_event(summary, start_date, end_date)
+  end
+
+  desc "import schedule", "import schedule from clic to google calendar"
+
+  def import
+    wc.authorize
+    wc.get_schedule
   end
 end

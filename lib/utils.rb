@@ -9,4 +9,8 @@ module Utils
   def secure_prompt(text)
     PROMPT.mask(text)
   end
+
+  def choice_prompt(choice)
+    PROMPT.yes?(choice)
+  end
 end
