@@ -4,7 +4,9 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     base64 (0.2.0)
+    connection_pool (2.4.1)
     declarative (0.0.20)
+    domain_name (0.6.20240107)
     faraday (2.10.1)
       faraday-net_http (>= 2.0, < 3.2)
       logger
@@ -29,22 +31,55 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
+    http-cookie (1.0.6)
+      domain_name (~> 0.5)
     httpclient (2.8.3)
     jwt (2.8.2)
       base64
     logger (1.6.0)
+    mechanize (2.12.0)
+      addressable (~> 2.8)
+      base64
+      domain_name (~> 0.5, >= 0.5.20190701)
+      http-cookie (~> 1.0, >= 1.0.3)
+      mime-types (~> 3.0)
+      net-http-digest_auth (~> 1.4, >= 1.4.1)
+      net-http-persistent (>= 2.5.2, < 5.0.dev)
+      nkf
+      nokogiri (~> 1.11, >= 1.11.2)
+      rubyntlm (~> 0.6, >= 0.6.3)
+      webrick (~> 1.7)
+      webrobots (~> 0.1.2)
+    mime-types (3.5.2)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2024.0806)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.7)
     multi_json (1.15.0)
     mutex_m (0.2.0)
     net-http (0.4.1)
       uri
+    net-http-digest_auth (1.4.1)
+    net-http-persistent (4.0.2)
+      connection_pool (~> 2.2)
+    nkf (0.2.0)
+    nokogiri (1.16.7)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.16.7-arm64-darwin)
+      racc (~> 1.4)
     os (1.1.4)
+    pastel (0.8.0)
+      tty-color (~> 0.5)
     public_suffix (6.0.1)
+    racc (1.8.1)
     representable (3.2.0)
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
+    rubyntlm (0.6.5)
+      base64
     signet (0.19.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -52,11 +87,23 @@ GEM
       multi_json (~> 1.10)
     thor (0.19.4)
     trailblazer-option (0.1.2)
+    tty-color (0.6.0)
     tty-cursor (0.7.1)
+    tty-prompt (0.23.1)
+      pastel (~> 0.8)
+      tty-reader (~> 0.8)
+    tty-reader (0.9.0)
+      tty-cursor (~> 0.7)
+      tty-screen (~> 0.8)
+      wisper (~> 2.0)
+    tty-screen (0.8.2)
     tty-spinner (0.9.3)
       tty-cursor (~> 0.7)
     uber (0.1.0)
     uri (0.13.0)
+    webrick (1.8.1)
+    webrobots (0.1.2)
+    wisper (2.0.1)
 
 PLATFORMS
   arm64-darwin-23
@@ -65,7 +112,9 @@ PLATFORMS
 DEPENDENCIES
   google-apis-calendar_v3 (~> 0.5.0)
   googleauth
+  mechanize
   thor (~> 0.19.1)
+  tty-prompt
   tty-spinner
 
 BUNDLED WITH
