@@ -48,7 +48,7 @@ class GoogleCalendar
   private
 
   def calendar_id
-    @calendar_id ||= "jackchong398@gmail.com"
+    @calendar_id ||= ENV["CALENDAR_ID"]
   end
 
   def authorize
