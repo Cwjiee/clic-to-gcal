@@ -43,7 +43,8 @@ class SchedulerCli < Thor
   desc "import schedule", "import schedule from clic to google calendar"
 
   def import
-    wc.authorize
-    wc.get_schedule
+    @wc.authorize
+    data = @wc.get_schedule
+    @cal.import_to_calendar data
   end
 end

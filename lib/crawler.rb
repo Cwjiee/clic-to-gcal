@@ -52,7 +52,8 @@ class WebCrawler
       end
     end
 
-    pp days
+    days
+    # pp days
   end
 
   def show_table # only to show schedule in terminal

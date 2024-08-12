@@ -21,20 +21,21 @@ class GoogleCalendar
     puts "Error occured: #{e}"
   end
 
-  def insert_event(summary, start_date, end_date)
+  def insert_event(summary, start_time, end_time, location)
     time_zone = "Asia/Kuala_Lumpur"
     send_updates = "all"
 
     event = Google::Apis::CalendarV3::Event.new(
       summary:,
       start: {
-        date: start_date,
+        date_time: start_time,
         time_zone:
       },
       end: {
-        date: end_date,
+        date_time: end_time,
         time_zone:
-      }
+      },
+      location:
     )
 
     spinner = TTY::Spinner.new(format: :bouncing)
@@ -43,6 +44,28 @@ class GoogleCalendar
     spinner.stop("successfully added event")
   rescue Google::Apis::ClientError => e
     puts "Error occured: #{e}"
+  end
+
+  def import_to_calendar(data)
+    dates = get_dates_of_week
+    data.each_pair do |day, classes|
+      date =
+        case day
+        when "Mo" then dates[0]
+        when "Tu" then dates[1]
+        when "We" then dates[2]
+        when "Th" then dates[3]
+        when "Fr" then dates[4]
+        when "Sa" then dates[5]
+        when "Su" then dates[6]
+        end
+
+      classes.each do |c|
+        start_time = convert_to_rfc3339(date, c[:start_time])
+        end_time = convert_to_rfc3339(date, c[:end_time])
+        insert_event(c[:section], start_time, end_time, c[:venue])
+      end
+    end
   end
 
   private
@@ -61,6 +84,19 @@ class GoogleCalendar
     calendar.authorization = Google::Auth.get_application_default(scopes)
 
     @service = calendar
+  end
+
+  def get_dates_of_week
+    date = Date.today
+    start_of_week = date.monday? ? date : date - date.cwday
+    end_of_week = start_of_week + 6
+
+    (start_of_week..end_of_week).to_a
+  end
+
+  def convert_to_rfc3339(date, time)
+    time = Time.parse("#{date} #{time}")
+    time.iso8601
   end
 end
 
