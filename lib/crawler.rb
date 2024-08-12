@@ -27,12 +27,17 @@ class WebCrawler
       return "No table found in the iframe content."
     end
 
+    titles = @titles.map do |title|
+      title.text.match(/- (.+)/)[1]
+    end
+
     days = {}
 
-    @table.each do |tb|
+    @table.each_with_index do |tb, index|
+      title = titles[index]
       table_rows = tb.search("tr")
 
-      table_rows.each_with_index do |row, idx|
+      table_rows.each do |row|
         next if table_rows.first == row
 
         section_cells = row.search("td div span a")
@@ -47,7 +52,7 @@ class WebCrawler
           start_time, end_time = scan_time cell.text
 
           days[day] = [] if days[day].nil?
-          days[day] << {start_time:, end_time:, section:, venue:}
+          days[day] << {start_time:, end_time:, section:, venue:, title:}
         end
       end
     end
@@ -87,11 +92,12 @@ class WebCrawler
     form = iframe_page.form_with(name: "win0")
     form.radiobutton_with(value: "L").check
     result_page = agent.submit(form)
-    @table = result_page.search("table.PSLEVEL3GRIDWBO[dir='ltr']")
+    @table = result_page.search("table.PSLEVEL3GRID[dir='ltr'][cols='6']")
+    @titles = result_page.search("td.PAGROUPDIVIDER.PSLEFTCORNER")
   end
 
   def parse_page
-    agent.user_agent_alias = "Mac Firefox"
+    agent.user_agent_alias = "#{ENV["OS"]} #{ENV["BROWSER"]}"
     @page = agent.get("https://clic.mmu.edu.my/psp/csprd/?cmd=login")
   end
 

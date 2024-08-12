@@ -1,8 +1,9 @@
 require "google/apis/calendar_v3"
 require "googleauth"
-require "tty-spinner"
+require_relative "utils"
 
 class GoogleCalendar
+  include Utils
   attr_reader :service
 
   def initialize
@@ -40,10 +41,9 @@ class GoogleCalendar
       color_id:
     )
 
-    spinner = TTY::Spinner.new(format: :bouncing)
-    spinner.auto_spin
+    start_spinner
     service.insert_event(calendar_id, event, send_updates:)
-    spinner.stop("successfully added event")
+    stop_spinner("successfully added event")
   rescue Google::Apis::ClientError => e
     puts "Error occured: #{e}"
   end
@@ -65,7 +65,7 @@ class GoogleCalendar
       classes.each do |c|
         start_time = convert_to_rfc3339(date, c[:start_time])
         end_time = convert_to_rfc3339(date, c[:end_time])
-        insert_event(c[:section], start_time, end_time, c[:venue])
+        insert_event(c[:title], start_time, end_time, c[:venue])
       end
     end
   end

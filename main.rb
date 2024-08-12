@@ -6,4 +6,4 @@ cal = GoogleCalendar.new
 agent = Mechanize.new
 wc = WebCrawler.new(agent)
 
-SchedulerCli.start(ARGV, {cal: cal, wc: wc})
+SchedulerCli.start(ARGV, {cal:, wc:})
