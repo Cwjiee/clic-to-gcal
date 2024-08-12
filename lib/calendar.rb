@@ -24,6 +24,7 @@ class GoogleCalendar
   def insert_event(summary, start_time, end_time, location)
     time_zone = "Asia/Kuala_Lumpur"
     send_updates = "all"
+    color_id = "5"
 
     event = Google::Apis::CalendarV3::Event.new(
       summary:,
@@ -35,7 +36,8 @@ class GoogleCalendar
         date_time: end_time,
         time_zone:
       },
-      location:
+      location:,
+      color_id:
     )
 
     spinner = TTY::Spinner.new(format: :bouncing)
