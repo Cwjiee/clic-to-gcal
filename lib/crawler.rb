@@ -46,13 +46,16 @@ class WebCrawler
         venue_cells = row.search('td div span[id^="MTG_LOC$"]')
         venue = venue_cells.map(&:text)
 
+        # date_cells = row.search('td div span[id^="MTG_DATES$"]')
+        # end_date = scan_date date_cells
+
         sched_cells = row.search('td div span[id^="MTG_SCHED$"]')
         sched_cells.each do |cell|
           day = cell.text[0] + cell.text[1]
           start_time, end_time = scan_time cell.text
 
           days[day] = [] if days[day].nil?
-          days[day] << {start_time:, end_time:, section:, venue:, title:}
+          days[day] << {start_time:, end_time:, section:, venue:, title:} # , end_date:
         end
       end
     end
@@ -77,6 +80,15 @@ class WebCrawler
   end
 
   private
+
+  def scan_date(contents)
+    dates = []
+    contents.each do |content|
+      text = content.text
+      dates = text.scan(/\d{2}\/\d{2}\/\d{4}/)
+    end
+    dates.last
+  end
 
   def scan_time(content)
     time_regex = /(\d{1,2}:\d{2})(AM|PM)/

@@ -38,7 +38,8 @@ class GoogleCalendar
         time_zone:
       },
       location:,
-      color_id:
+      color_id:,
+      # recurrence: ["RRULE:FREQ=WEEKLY;UNTIL=20110701T170000Z"]
     )
 
     start_spinner
@@ -65,7 +66,8 @@ class GoogleCalendar
       classes.each do |c|
         start_time = convert_to_rfc3339(date, c[:start_time])
         end_time = convert_to_rfc3339(date, c[:end_time])
-        insert_event(c[:title], start_time, end_time, c[:venue])
+        # end_date = convert_date_to_rfc5545(c[:end_date])
+        insert_event(c[:title], start_time, end_time, c[:venue]) # end_date
       end
     end
   end
@@ -90,7 +92,7 @@ class GoogleCalendar
 
   def get_dates_of_week
     date = Date.today
-    start_of_week = date.monday? ? date : date - date.cwday
+    start_of_week = date.monday? ? date : date - date.cwday + 1
     end_of_week = start_of_week + 6
 
     (start_of_week..end_of_week).to_a
@@ -99,6 +101,15 @@ class GoogleCalendar
   def convert_to_rfc3339(date, time)
     time = Time.parse("#{date} #{time}")
     time.iso8601
+  end
+
+  def convert_date_to_rfc5545(datetime)
+    splitted_datetime = datetime.split("/")
+    int_d = splitted_datetime.map(&:to_i)
+
+    date = Date.new(int_d[2], int_d[1], int_d[0])
+    time = Time.parse(date.rfc3339)
+    time.utc.strftime("%Y%m%dT%H%M%SZ")
   end
 end
 

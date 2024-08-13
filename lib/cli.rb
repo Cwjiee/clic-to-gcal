@@ -17,7 +17,7 @@ class SchedulerCli < Thor
     @cal.events.each { |ev| puts ev.summary }
   end
 
-  desc "delete", "delete events with prompting"
+  desc "delete", "Delete events with prompting"
 
   def delete
     @cal.events.each do |ev|
@@ -28,7 +28,7 @@ class SchedulerCli < Thor
     end
   end
 
-  desc "add", "add event to calendar"
+  desc "add", "Adds event to calendar"
 
   def add
     summary = normal_prompt("insert event title:")
@@ -40,7 +40,7 @@ class SchedulerCli < Thor
     @cal.insert_event(summary, start_date, end_date)
   end
 
-  desc "import", "import schedule from clic to google calendar"
+  desc "import", "imports schedule from clic to google calendar"
 
   def import
     @wc.authorize
