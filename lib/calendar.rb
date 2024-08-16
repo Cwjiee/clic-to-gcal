@@ -22,7 +22,7 @@ class GoogleCalendar
     puts "Error occured: #{e}"
   end
 
-  def insert_event(summary, start_time, end_time, location)
+  def insert_event(summary, start_time, end_time, location, end_date)
     time_zone = "Asia/Kuala_Lumpur"
     send_updates = "all"
     color_id = "5"
@@ -39,7 +39,7 @@ class GoogleCalendar
       },
       location:,
       color_id:,
-      # recurrence: ["RRULE:FREQ=WEEKLY;UNTIL=20110701T170000Z"]
+      recurrence: ["RRULE:FREQ=WEEKLY;UNTIL=#{end_date}"]
     )
 
     start_spinner
@@ -66,8 +66,8 @@ class GoogleCalendar
       classes.each do |c|
         start_time = convert_to_rfc3339(date, c[:start_time])
         end_time = convert_to_rfc3339(date, c[:end_time])
-        # end_date = convert_date_to_rfc5545(c[:end_date])
-        insert_event(c[:title], start_time, end_time, c[:venue]) # end_date
+        end_date = convert_date_to_rfc5545(c[:end_date])
+        insert_event(c[:title], start_time, end_time, c[:venue], end_date)
       end
     end
   end
@@ -108,6 +108,7 @@ class GoogleCalendar
     int_d = splitted_datetime.map(&:to_i)
 
     date = Date.new(int_d[2], int_d[1], int_d[0])
+    date += 7
     time = Time.parse(date.rfc3339)
     time.utc.strftime("%Y%m%dT%H%M%SZ")
   end
